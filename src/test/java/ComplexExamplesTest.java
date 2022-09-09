@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -125,5 +125,52 @@ class ComplexExamplesTest {
         };
         Map<String, Long> result = ComplexExamples.getNameGroup(people);
         assertTrue(expected.equals(result));
+    }
+
+    @Test
+    void getFirstSumGroupTest1() {
+        int[] array = {1,5,9,7,12,10};
+        int target = 17;
+        int[] actual = ComplexExamples.getFirstSumGroup(array, target);
+        int[] expected = {5,12};
+        assertArrayEquals(expected, actual);
+    }
+    @Test
+    void getFirstSumGroupTest2() {
+        int[] array = {1};
+        int target = 7;
+        int[] actual = ComplexExamples.getFirstSumGroup(array, target);
+        assertTrue(actual.length==0);
+    }
+    @Test
+    void getFirstSumGroupTest3() {
+        int[] array = null;
+        int target = 7;
+        int[] actual = ComplexExamples.getFirstSumGroup(array, target);
+        assertTrue(actual.length==0);
+    }
+
+    @Test
+    void getAllSumGroupTest1() {
+        int[] array = {1,5,9,7,12,10,16};
+        int target = 17;
+        int[]expected = {1,16,5,12,7,10};
+        List<int[]> list = ComplexExamples.getAllSumGroup(array, target);
+        int[] actual = list.stream().flatMapToInt(x -> Arrays.stream(x)).toArray();
+        assertArrayEquals(expected,actual);
+    }
+    @Test
+    void getAllSumGroupTest2() {
+        int[] array = {3};
+        int target = 9;
+        List<int[]> actual  = ComplexExamples.getAllSumGroup(array,target);
+        assertTrue(actual.isEmpty());
+    }
+    @Test
+    void getAllSumGroupTest3() {
+        int[] array = null;
+        int target = 9;
+        List<int[]> actual  = ComplexExamples.getAllSumGroup(array,target);
+        assertTrue(actual.isEmpty());
     }
 }

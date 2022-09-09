@@ -130,10 +130,23 @@ public class ComplexExamples {
         /*
         Task2
 
-            [3, 4, 2, 7], 10 -> [3, 7] - вывести пару менно в скобках, которые дают сумму - 10
+            [3, 4, 2, 7], 10 -> [3, 7] - вывести пару именно в скобках, которые дают сумму - 10
          */
+        //Вывод первой пары
+        int[] array1 = {3, 4, 2, 7};
+        int target = 10;
+        System.out.println("Вывод первой пары чисел, дающих в сумме " + target + ":");
+        int[] firstPair = getFirstSumGroup(array1, target);
+        System.out.println(Arrays.toString(array1) + ", " + target + " -> " + Arrays.toString(firstPair));
+        System.out.println();
 
-
+        //Вывод всех пар
+        int[] array2 = {3, 4, 6, 1, 9, 2, 7};
+        System.out.println("Вывод всех пар чисел, дающих в сумме " + target + ":");
+        List<int[]> list = getAllSumGroup(array2, 10);
+        System.out.print(Arrays.toString(array2) + ", " + target + " -> ");
+        list.forEach(x -> System.out.print(Arrays.toString(x) + " "));
+        System.out.println();
 
         /*
         Task3
@@ -163,19 +176,84 @@ public class ComplexExamples {
             x.getName().substring(0, 1).toUpperCase() + x.getName().substring(1).toLowerCase());
 
     /*
-    Проверяем, чтобы значение в массиве не равнялось null и, чтобы "name" у объекта не было равно null
+    Проверяем, чтобы значение в массиве не равнялось null и чтобы "name" у объекта не было равно null
      */
-    private static Predicate<Person> checkPerson = x -> x != null && x.getName() != null; //
+    private static Predicate<Person> checkPerson = x -> x != null && x.getName() != null;
 
+    //Получаем Map, где key = Person name, value = количество тезок
     public static Map<String, Long> getNameGroup(Person[] people) {
+        //Если пришел null, возвращаем пустой Map
         if (people == null) return Collections.EMPTY_MAP;
-
         Map<String, Long> nameGroup = Arrays.stream(people)
                 .filter(checkPerson) //избавляемся от null значений внутри массива
-                .map(getNormalCaseNames)
+                .map(getNormalCaseNames)//Приводим имя к нормальному состоянию (первая буква с большой, остальные с маленькой)
                 .distinct() // избавляемся от дубликатов
                 .collect(Collectors.groupingBy(Person::getName, TreeMap::new, Collectors.counting()));// Получаем Map, где key = имя, value = количесвто тезок
         return nameGroup;
     }
 
+    //Task2
+    //Находим первую пару чисел, чья сумма дает в результате входное число
+    public static int[] getFirstSumGroup(int[] array, int target) {
+        //Если передан null или массив, размером меньше 2, возвращаем пустой лист
+        if (array == null || array.length < 2) return new int[]{};
+        for (int i = 0; i < array.length - 1; i++) {
+            for (int j = 1; j < array.length; j++) {
+                //Проходим циклу, пока не найдем первую пару числу, дающую в сумме входное число
+                if (array[i] + array[j] == target) {
+                    return new int[]{array[i], array[j]};
+                }
+            }
+        }
+        //Если пара чисел не найдена, возвращаем пустой массив
+        return new int[]{};
+    }
+
+    //Находим все пары чисел, чьи суммы в результате дают входное число
+    public static List<int[]> getAllSumGroup(int[] array, int target) {
+        //Если передан null или массив, размером меньше 2, возвращаем пустой лист
+        if (array == null || array.length < 2) return Collections.EMPTY_LIST;
+        List<int[]> sumPairs = new ArrayList<>();
+        insertionSort(array);//Отсортируем массив
+        int firstNumber = 0;//Начало массива
+        int lastNumber = array.length - 1;//Конец массива
+        while (firstNumber < lastNumber) {//Пока конец и начало не пересеклись
+            int temp = array[firstNumber] + array[lastNumber];//Результат суммы двух пар
+            if (temp == target) {//Если сумма пар равна входному числу
+                sumPairs.add(new int[]{array[firstNumber], array[lastNumber]});//Добавляем пары в список
+                //смещаем начало и конец к центру
+                firstNumber++;
+                lastNumber--;
+            } else {//Если сумма пар не равна входному числу
+                if (temp < target)
+                    firstNumber++;//Елси результат суммы меньше входного числа, смещаем к центру начало массива
+                else lastNumber--;//Если больше, смещаем к центру конец массива
+            }
+        }
+        return sumPairs;
+    }
+
+    //Реализация алгоритма сортировки методом вставок
+    //Метод для перестановки значений в массиве во время его сортировки
+    private static void swap(int[] array, int x, int y) {
+        int temp = array[x];
+        array[x] = array[y];
+        array[y] = temp;
+    }
+
+    //Алгоритм сортировки методом вставок
+    public static void insertionSort(int[] array) {
+        int i, j, temp;
+        //Внешний цикл
+        for (i = 1; i < array.length; i++) {
+            j = i;
+            temp = array[i];
+            //Внутренний цикл, поиск наименьшего значения
+            while (j > 0 && array[j] < array[j - 1]) {
+                swap(array, j, j - 1);
+                j--;
+            }
+            array[j] = temp;
+        }
+    }
 }
