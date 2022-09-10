@@ -119,7 +119,6 @@ public class ComplexExamples {
                 Key: Jack
                 Value:1
          */
-
         Map<String, Long> map = getNameGroup(RAW_DATA);
         if (map.isEmpty()) {
             System.out.println("Map is empty");
@@ -127,6 +126,7 @@ public class ComplexExamples {
             map.entrySet().forEach(element -> System.out.println("key:" + element.getKey() + "\n" + "value:" + element.getValue()));
         }
 
+        System.out.println();
         /*
         Task2
 
@@ -138,6 +138,7 @@ public class ComplexExamples {
         System.out.println("Вывод первой пары чисел, дающих в сумме " + target + ":");
         int[] firstPair = getFirstSumGroup(array1, target);
         System.out.println(Arrays.toString(array1) + ", " + target + " -> " + Arrays.toString(firstPair));
+
         System.out.println();
 
         //Вывод всех пар
@@ -146,8 +147,9 @@ public class ComplexExamples {
         List<int[]> list = getAllSumGroup(array2, 10);
         System.out.print(Arrays.toString(array2) + ", " + target + " -> ");
         list.forEach(x -> System.out.print(Arrays.toString(x) + " "));
-        System.out.println();
 
+        System.out.println();
+        System.out.println();
         /*
         Task3
             Реализовать функцию нечеткого поиска
@@ -159,6 +161,12 @@ public class ComplexExamples {
                     fuzzySearch("cwheeel", "cartwheel"); // false
                     fuzzySearch("lw", "cartwheel"); // false
          */
+        System.out.println(fuzzySearch("car", "ca6$$#_rtwheel"));
+        System.out.println(fuzzySearch("cwhl", "cartwheel"));
+        System.out.println(fuzzySearch("cwhee", "cartwheel"));
+        System.out.println(fuzzySearch("cartwheel", "cartwheel"));
+        System.out.println(fuzzySearch("cwheeel", "cartwheel"));
+        System.out.println(fuzzySearch("lw", "cartwheel"));
 
 
     }
@@ -170,7 +178,7 @@ public class ComplexExamples {
         т.е. если в массиве содержаться имена "Harry", "harry", "HaRRy" - в Map
         они не должны отображаться как разные ключи.
 
-        Если в контексте нашей задачи такое не подразумевается, то убираем метод "map"
+        Если в контексте нашей задачи такое не подразумевается, то убираем "map"
      */
     private static Function<Person, Person> getNormalCaseNames = x -> new Person(x.getId(),
             x.getName().substring(0, 1).toUpperCase() + x.getName().substring(1).toLowerCase());
@@ -199,7 +207,7 @@ public class ComplexExamples {
         if (array == null || array.length < 2) return new int[]{};
         for (int i = 0; i < array.length - 1; i++) {
             for (int j = 1; j < array.length; j++) {
-                //Проходим циклу, пока не найдем первую пару числу, дающую в сумме входное число
+                //Проходим по циклу, пока не найдем первую пару чисел, дающую в сумме входное число
                 if (array[i] + array[j] == target) {
                     return new int[]{array[i], array[j]};
                 }
@@ -214,19 +222,24 @@ public class ComplexExamples {
         //Если передан null или массив, размером меньше 2, возвращаем пустой лист
         if (array == null || array.length < 2) return Collections.EMPTY_LIST;
         List<int[]> sumPairs = new ArrayList<>();
-        insertionSort(array);//Отсортируем массив
+        //Отсортируем массив
+        insertionSort(array);
         int firstNumber = 0;//Начало массива
         int lastNumber = array.length - 1;//Конец массива
-        while (firstNumber < lastNumber) {//Пока конец и начало не пересеклись
-            int temp = array[firstNumber] + array[lastNumber];//Результат суммы двух пар
-            if (temp == target) {//Если сумма пар равна входному числу
-                sumPairs.add(new int[]{array[firstNumber], array[lastNumber]});//Добавляем пары в список
+        //Пока конец и начало не пересеклись
+        while (firstNumber < lastNumber) {
+            int pairSumResult = array[firstNumber] + array[lastNumber];//Результат суммы двух пар
+            //Если сумма пар равна входному числу
+            if (pairSumResult == target) {
+                //Добавляем пары в список
+                sumPairs.add(new int[]{array[firstNumber], array[lastNumber]});
                 //смещаем начало и конец к центру
                 firstNumber++;
                 lastNumber--;
-            } else {//Если сумма пар не равна входному числу
-                if (temp < target)
-                    firstNumber++;//Елси результат суммы меньше входного числа, смещаем к центру начало массива
+                //Если сумма пар не равна входному числу
+            } else {
+                if (pairSumResult < target)
+                    firstNumber++;//Если результат суммы меньше входного числа, смещаем к центру начало массива
                 else lastNumber--;//Если больше, смещаем к центру конец массива
             }
         }
@@ -255,5 +268,50 @@ public class ComplexExamples {
             }
             array[j] = temp;
         }
+    }
+
+    //Task3
+    public static boolean fuzzySearch(String search, String data) {
+        if (search==null||data==null) return false;
+        int hitCount = 0;//Количество совпадений (если есть сопадение по символам строк поиска и данных, счетчик увеличивается на 1)
+        int symbolAmount = search.length();//количество символов искомой строки
+        //Получим массив символов из строки поиска и строки данных
+        char[] searchStrChars = search.toCharArray();
+        char[] dataStrChars = data.toCharArray();
+        /*
+        Пробегаемся по массиву символов поиска
+        j объявим в начале внешнего цикла, чтобы новый символ строки поиска начинал сравнение
+        с символом строки данных на котором мы остановились.
+         */
+        for (int i = 0, j = 0; i < searchStrChars.length; i++) {
+            while (j < dataStrChars.length) {
+                /*
+                если количество непроверенных символов в строке данных меньше чем
+                количество символов которые нужно сравнить, чтобы hitCount == symbolAmount,
+                завершаем работу метода, возвращаем false
+                 */
+                if (data.substring(j).length() < (symbolAmount - hitCount)) return false;
+                /*
+                Если не найдено ни одно соответствие и при этом количество
+                непроверенных символов меньше длины строки поиска,
+                завершаем работу метода, возвращаем false
+                 */
+                if (hitCount == 0 && data.substring(j).length() < search.length()) return false;
+                //Если найдено совпадение
+                if (searchStrChars[i] == dataStrChars[j]) {
+                    hitCount++;//Увеличиваем количество совпадений
+                    j++;
+                    break;
+                }
+                j++;
+            }
+            /*
+            Если количество совпадений равно длине строки поиска
+            Завершаем работу метода, возвращаем true
+             */
+            if (symbolAmount == hitCount) return true;
+        }
+        //Строка поиска не найдена в строке данных
+        return false;
     }
 }

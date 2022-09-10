@@ -129,48 +129,70 @@ class ComplexExamplesTest {
 
     @Test
     void getFirstSumGroupTest1() {
-        int[] array = {1,5,9,7,12,10};
+        int[] array = {1, 5, 9, 7, 12, 10};
         int target = 17;
         int[] actual = ComplexExamples.getFirstSumGroup(array, target);
-        int[] expected = {5,12};
+        int[] expected = {5, 12};
         assertArrayEquals(expected, actual);
     }
+
     @Test
     void getFirstSumGroupTest2() {
         int[] array = {1};
         int target = 7;
         int[] actual = ComplexExamples.getFirstSumGroup(array, target);
-        assertTrue(actual.length==0);
+        assertTrue(actual.length == 0);
     }
+
     @Test
     void getFirstSumGroupTest3() {
         int[] array = null;
         int target = 7;
         int[] actual = ComplexExamples.getFirstSumGroup(array, target);
-        assertTrue(actual.length==0);
+        assertTrue(actual.length == 0);
     }
 
     @Test
     void getAllSumGroupTest1() {
-        int[] array = {1,5,9,7,12,10,16};
+        int[] array = {1, 5, 9, 7, 12, 10, 16};
         int target = 17;
-        int[]expected = {1,16,5,12,7,10};
+        int[] expected = {1, 16, 5, 12, 7, 10};
         List<int[]> list = ComplexExamples.getAllSumGroup(array, target);
         int[] actual = list.stream().flatMapToInt(x -> Arrays.stream(x)).toArray();
-        assertArrayEquals(expected,actual);
+        assertArrayEquals(expected, actual);
     }
+
     @Test
     void getAllSumGroupTest2() {
         int[] array = {3};
         int target = 9;
-        List<int[]> actual  = ComplexExamples.getAllSumGroup(array,target);
+        List<int[]> actual = ComplexExamples.getAllSumGroup(array, target);
         assertTrue(actual.isEmpty());
     }
+
     @Test
     void getAllSumGroupTest3() {
         int[] array = null;
         int target = 9;
-        List<int[]> actual  = ComplexExamples.getAllSumGroup(array,target);
+        List<int[]> actual = ComplexExamples.getAllSumGroup(array, target);
         assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void fuzzySearchTest1() {
+        boolean actual = ComplexExamples.fuzzySearch("hello", "e#h!_&^sedaflhedhYlyo");
+        assertTrue(actual);
+    }
+
+    @Test
+    void fuzzySearchTest2() {
+        boolean actual = ComplexExamples.fuzzySearch("world", "w, phf!2@doghnrhldjfdksh");
+        assertTrue(actual);
+    }
+
+    @Test
+    void fuzzySearchTest3() {
+        boolean actual = ComplexExamples.fuzzySearch("car", "d#132afjlr");
+        assertFalse(actual);
     }
 }
