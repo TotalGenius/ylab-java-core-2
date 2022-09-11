@@ -1,13 +1,9 @@
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-
+import javax.crypto.spec.PSource;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
 
 public class ComplexExamples {
 
@@ -101,7 +97,7 @@ public class ComplexExamples {
 
         System.out.println();
         System.out.println("**************************************************");
-        System.out.println();
+        System.out.println("Task 1:");
         System.out.println("Duplicate filtered, grouped by name, sorted by name and id:");
         System.out.println();
 
@@ -119,11 +115,23 @@ public class ComplexExamples {
                 Key: Jack
                 Value:1
          */
-        Map<String, Long> map = getNameGroup(RAW_DATA);
+
+        Map<String, List<Person>> map = getNameGroup(RAW_DATA);
+
         if (map.isEmpty()) {
             System.out.println("Map is empty");
         } else {
-            map.entrySet().forEach(element -> System.out.println("key:" + element.getKey() + "\n" + "value:" + element.getValue()));
+            for (Map.Entry<String, List<Person>> entry : map.entrySet()) {
+                System.out.println(entry.getKey() + ":");
+                List<Person> people = entry.getValue();
+                int i = 1;
+                for (Person person : people) {
+                    System.out.println(i + " - " + person.getName() + " (" + person.getId() + ")");
+                    i++;
+                }
+            }
+            System.out.println("**************************************************");
+            map.entrySet().forEach(element -> System.out.println("key:" + element.getKey() + "\n" + "value:" + element.getValue().size()));
         }
 
         System.out.println();
@@ -132,6 +140,7 @@ public class ComplexExamples {
 
             [3, 4, 2, 7], 10 -> [3, 7] - вывести пару именно в скобках, которые дают сумму - 10
          */
+        System.out.println("Task 2:");
         //Вывод первой пары
         int[] array1 = {3, 4, 2, 7};
         int target = 10;
@@ -161,12 +170,31 @@ public class ComplexExamples {
                     fuzzySearch("cwheeel", "cartwheel"); // false
                     fuzzySearch("lw", "cartwheel"); // false
          */
+        System.out.println("Task 3:");
+
+        System.out.println("строка поиска: car, строка данных: ca6$$#_rtwheel");
         System.out.println(fuzzySearch("car", "ca6$$#_rtwheel"));
+        System.out.println();
+
+        System.out.println("строка поиска: cwhl, строка данных: cartwheel");
         System.out.println(fuzzySearch("cwhl", "cartwheel"));
+        System.out.println();
+
+        System.out.println("строка поиска: cwhee, строка данных: cartwheel");
         System.out.println(fuzzySearch("cwhee", "cartwheel"));
+        System.out.println();
+
+        System.out.println("строка поиска: cartwheel, строка данных: cartwheel");
         System.out.println(fuzzySearch("cartwheel", "cartwheel"));
+        System.out.println();
+
+        System.out.println("строка поиска: cwheeel, строка данных: cartwheel");
         System.out.println(fuzzySearch("cwheeel", "cartwheel"));
+        System.out.println();
+
+        System.out.println("строка поиска: lw, строка данных: cartwheel");
         System.out.println(fuzzySearch("lw", "cartwheel"));
+        System.out.println();
 
 
     }
@@ -178,7 +206,7 @@ public class ComplexExamples {
         т.е. если в массиве содержаться имена "Harry", "harry", "HaRRy" - в Map
         они не должны отображаться как разные ключи.
 
-        Если в контексте нашей задачи такое не подразумевается, то убираем "map"
+        Если в контексте нашей задачи такое не подразумевается, то убираем метод "map"
      */
     private static Function<Person, Person> getNormalCaseNames = x -> new Person(x.getId(),
             x.getName().substring(0, 1).toUpperCase() + x.getName().substring(1).toLowerCase());
@@ -188,15 +216,17 @@ public class ComplexExamples {
      */
     private static Predicate<Person> checkPerson = x -> x != null && x.getName() != null;
 
-    //Получаем Map, где key = Person name, value = количество тезок
-    public static Map<String, Long> getNameGroup(Person[] people) {
+    //Получаем Map, где key = Person name, value = лист тезок
+    public static Map<String, List<Person>> getNameGroup(Person[] people) {
         //Если пришел null, возвращаем пустой Map
         if (people == null) return Collections.EMPTY_MAP;
-        Map<String, Long> nameGroup = Arrays.stream(people)
+        Map<String, List<Person>> nameGroup = Arrays.stream(people)
                 .filter(checkPerson) //избавляемся от null значений внутри массива
                 .map(getNormalCaseNames)//Приводим имя к нормальному состоянию (первая буква с большой, остальные с маленькой)
                 .distinct() // избавляемся от дубликатов
-                .collect(Collectors.groupingBy(Person::getName, TreeMap::new, Collectors.counting()));// Получаем Map, где key = имя, value = количесвто тезок
+                .collect(Collectors.groupingBy(Person::getName, TreeMap::new, Collectors.toList()));// Получаем TreeMap, где key = имя, value = лист тезок
+        //Сортируем каждый лист в Map по id
+        nameGroup.entrySet().forEach(x -> x.getValue().sort((person1, person2) -> person1.getId() - person2.getId()));
         return nameGroup;
     }
 
@@ -272,7 +302,7 @@ public class ComplexExamples {
 
     //Task3
     public static boolean fuzzySearch(String search, String data) {
-        if (search==null||data==null) return false;
+        if (search == null || data == null) return false;
         int hitCount = 0;//Количество совпадений (если есть сопадение по символам строк поиска и данных, счетчик увеличивается на 1)
         int symbolAmount = search.length();//количество символов искомой строки
         //Получим массив символов из строки поиска и строки данных

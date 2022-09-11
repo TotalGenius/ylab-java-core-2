@@ -17,14 +17,58 @@ class ComplexExamplesTest {
                 new ComplexExamples.Person(5, "Isabel"),
                 new ComplexExamples.Person(6, "Isabel")
         };
-        Map<String, Long> expected = new TreeMap<>() {
+
+        List<ComplexExamples.Person> listJohn = new ArrayList<>();
+        listJohn.add(new ComplexExamples.Person(1, "John"));
+        listJohn.add(new ComplexExamples.Person(3, "John"));
+
+        List<ComplexExamples.Person> listIsabel = new ArrayList<>();
+        listIsabel.add(new ComplexExamples.Person(2, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(5, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(6, "Isabel"));
+
+        listJohn.sort((x, y) -> x.getId() - y.getId());
+        listIsabel.sort((x, y) -> x.getId() - y.getId());
+
+        Map<String, List<ComplexExamples.Person>> expected = new TreeMap<>() {
             {
-                put("John", 2L);
-                put("Isabel", 3L);
+                put("John", listJohn);
+                put("Isabel", listIsabel);
             }
         };
-        Map<String, Long> result = ComplexExamples.getNameGroup(people);
-        assertTrue(expected.equals(result));
+
+        Map<String, List<ComplexExamples.Person>> actual = ComplexExamples.getNameGroup(people);
+
+        boolean result = true;
+
+        if (expected.size() != actual.size()) {
+            result = false;
+        } else {
+            Iterator<Map.Entry<String, List<ComplexExamples.Person>>> expectedIterator = expected.entrySet().iterator();
+            Iterator<Map.Entry<String, List<ComplexExamples.Person>>> actualIterator = actual.entrySet().iterator();
+
+            while (expectedIterator.hasNext() && actualIterator.hasNext()) {
+
+                Map.Entry<String, List<ComplexExamples.Person>> expectedEntry = expectedIterator.next();
+                Map.Entry<String, List<ComplexExamples.Person>> actualEntry = actualIterator.next();
+
+                if (!expectedEntry.getKey().equals(actualEntry.getKey())) {
+                    result = false;
+                    break;
+                }
+                List<ComplexExamples.Person> expectedList = expectedEntry.getValue();
+                List<ComplexExamples.Person> actualList = actualEntry.getValue();
+                if (!expectedList.equals(actualList)) {
+                    result = false;
+                    break;
+                }
+
+            }
+            assertTrue(result);
+        }
+
+
+        assertTrue(expected.equals(actual));
     }
 
     @Test
@@ -44,17 +88,67 @@ class ComplexExamplesTest {
                 new ComplexExamples.Person(7, "IsaBel"),//тезка (Isabel 4)
                 new ComplexExamples.Person(8, "joHN"),//тезка (Jonh 4)
                 new ComplexExamples.Person(10, "JOHN"),//тезка (Jonh 5)
-                new ComplexExamples.Person(12, "ISABEL"),//тезка (Isabel 51)
+                new ComplexExamples.Person(12, "ISABEL"),//тезка (Isabel 5)
                 new ComplexExamples.Person(12, "ISaBeL")//дубликат
         };
-        Map<String, Long> expected = new TreeMap<>() {
+
+        List<ComplexExamples.Person> listJohn = new ArrayList<>();
+        listJohn.add(new ComplexExamples.Person(1, "John"));
+        listJohn.add(new ComplexExamples.Person(9, "John"));
+        listJohn.add(new ComplexExamples.Person(8, "John"));
+        listJohn.add(new ComplexExamples.Person(10, "John"));
+        listJohn.add(new ComplexExamples.Person(3, "John"));
+
+        List<ComplexExamples.Person> listIsabel = new ArrayList<>();
+        listIsabel.add(new ComplexExamples.Person(2, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(6, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(5, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(12, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(7, "Isabel"));
+
+        listJohn.sort((x, y) -> x.getId() - y.getId());
+        listIsabel.sort((x, y) -> x.getId() - y.getId());
+
+        Map<String, List<ComplexExamples.Person>> expected = new TreeMap<>() {
             {
-                put("John", 5L);
-                put("Isabel", 5L);
+                put("John", listJohn);
+                put("Isabel", listIsabel);
             }
         };
-        Map<String, Long> result = ComplexExamples.getNameGroup(people);
-        assertTrue(expected.equals(result));
+
+        Map<String, List<ComplexExamples.Person>> actual = ComplexExamples.getNameGroup(people);
+
+        boolean result = true;
+
+        if (expected.size() != actual.size()) {
+            result = false;
+        } else {
+            Iterator<Map.Entry<String, List<ComplexExamples.Person>>> expectedIterator = expected.entrySet().iterator();
+            Iterator<Map.Entry<String, List<ComplexExamples.Person>>> actualIterator = actual.entrySet().iterator();
+            while (expectedIterator.hasNext() && actualIterator.hasNext()) {
+
+                Map.Entry<String, List<ComplexExamples.Person>> expectedEntry = expectedIterator.next();
+                Map.Entry<String, List<ComplexExamples.Person>> actualEntry = actualIterator.next();
+
+                if (!expectedEntry.getKey().equals(actualEntry.getKey())) {
+                    result = false;
+                    break;
+                }
+                List<ComplexExamples.Person> expectedList = expectedEntry.getValue();
+                List<ComplexExamples.Person> actualList = actualEntry.getValue();
+                if (!expectedList.equals(actualList)) {
+                    result = false;
+                    break;
+                }
+
+            }
+            assertTrue(result);
+        }
+
+
+        assertTrue(expected.equals(actual));
+
+
     }
 
     @Test
@@ -70,20 +164,65 @@ class ComplexExamplesTest {
                 null,
                 new ComplexExamples.Person(6, "Isabel")
         };
-        Map<String, Long> expected = new TreeMap<>() {
+
+
+        List<ComplexExamples.Person> listJohn = new ArrayList<>();
+        listJohn.add(new ComplexExamples.Person(1, "John"));
+        listJohn.add(new ComplexExamples.Person(3, "John"));
+
+        List<ComplexExamples.Person> listIsabel = new ArrayList<>();
+        listIsabel.add(new ComplexExamples.Person(2, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(5, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(6, "Isabel"));
+
+        listJohn.sort((x, y) -> x.getId() - y.getId());
+        listIsabel.sort((x, y) -> x.getId() - y.getId());
+
+        Map<String, List<ComplexExamples.Person>> expected = new TreeMap<>() {
             {
-                put("John", 2L);
-                put("Isabel", 3L);
+                put("John", listJohn);
+                put("Isabel", listIsabel);
             }
         };
-        Map<String, Long> result = ComplexExamples.getNameGroup(people);
-        assertTrue(expected.equals(result));
+
+        Map<String, List<ComplexExamples.Person>> actual = ComplexExamples.getNameGroup(people);
+
+        boolean result = true;
+
+        if (expected.size() != actual.size()) {
+            result = false;
+        } else {
+            Iterator<Map.Entry<String, List<ComplexExamples.Person>>> expectedIterator = expected.entrySet().iterator();
+            Iterator<Map.Entry<String, List<ComplexExamples.Person>>> actualIterator = actual.entrySet().iterator();
+            while (expectedIterator.hasNext() && actualIterator.hasNext()) {
+
+                Map.Entry<String, List<ComplexExamples.Person>> expectedEntry = expectedIterator.next();
+                Map.Entry<String, List<ComplexExamples.Person>> actualEntry = actualIterator.next();
+
+                if (!expectedEntry.getKey().equals(actualEntry.getKey())) {
+                    result = false;
+                    break;
+                }
+                List<ComplexExamples.Person> expectedList = expectedEntry.getValue();
+                List<ComplexExamples.Person> actualList = actualEntry.getValue();
+                if (!expectedList.equals(actualList)) {
+                    result = false;
+                    break;
+                }
+
+            }
+            assertTrue(result);
+        }
+
+
+        assertTrue(expected.equals(actual));
+
     }
 
     @Test
     void getNameGroupTest4() {
         ComplexExamples.Person[] people = null;
-        Map<String, Long> result = ComplexExamples.getNameGroup(people);
+        Map<String, List<ComplexExamples.Person>> result = ComplexExamples.getNameGroup(people);
         assertTrue(result.isEmpty());
     }
 
@@ -99,7 +238,7 @@ class ComplexExamplesTest {
 
         };
 
-        Map<String, Long> result = ComplexExamples.getNameGroup(people);
+        Map<String, List<ComplexExamples.Person>> result = ComplexExamples.getNameGroup(people);
         assertTrue(result.isEmpty());
     }
 
@@ -117,14 +256,59 @@ class ComplexExamplesTest {
                 new ComplexExamples.Person(9, null)
 
         };
-        Map<String, Long> expected = new TreeMap<>() {
+
+
+        List<ComplexExamples.Person> listJohn = new ArrayList<>();
+        listJohn.add(new ComplexExamples.Person(1, "John"));
+        listJohn.add(new ComplexExamples.Person(3, "John"));
+
+        List<ComplexExamples.Person> listIsabel = new ArrayList<>();
+        listIsabel.add(new ComplexExamples.Person(2, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(5, "Isabel"));
+        listIsabel.add(new ComplexExamples.Person(6, "Isabel"));
+
+        listJohn.sort((x, y) -> x.getId() - y.getId());
+        listIsabel.sort((x, y) -> x.getId() - y.getId());
+
+        Map<String, List<ComplexExamples.Person>> expected = new TreeMap<>() {
             {
-                put("John", 2L);
-                put("Isabel", 3L);
+                put("John", listJohn);
+                put("Isabel", listIsabel);
             }
         };
-        Map<String, Long> result = ComplexExamples.getNameGroup(people);
-        assertTrue(expected.equals(result));
+
+        Map<String, List<ComplexExamples.Person>> actual = ComplexExamples.getNameGroup(people);
+
+        boolean result = true;
+
+        if (expected.size() != actual.size()) {
+            result = false;
+        } else {
+            Iterator<Map.Entry<String, List<ComplexExamples.Person>>> expectedIterator = expected.entrySet().iterator();
+            Iterator<Map.Entry<String, List<ComplexExamples.Person>>> actualIterator = actual.entrySet().iterator();
+            while (expectedIterator.hasNext() && actualIterator.hasNext()) {
+
+                Map.Entry<String, List<ComplexExamples.Person>> expectedEntry = expectedIterator.next();
+                Map.Entry<String, List<ComplexExamples.Person>> actualEntry = actualIterator.next();
+
+                if (!expectedEntry.getKey().equals(actualEntry.getKey())) {
+                    result = false;
+                    break;
+                }
+                List<ComplexExamples.Person> expectedList = expectedEntry.getValue();
+                List<ComplexExamples.Person> actualList = actualEntry.getValue();
+                if (!expectedList.equals(actualList)) {
+                    result = false;
+                    break;
+                }
+
+            }
+            assertTrue(result);
+        }
+
+
+        assertTrue(expected.equals(actual));
+
     }
 
     @Test
