@@ -144,19 +144,21 @@ public class ComplexExamples {
         //Вывод первой пары
         int[] array1 = {3, 4, 2, 7};
         int target = 10;
-        System.out.println("Вывод первой пары чисел, дающих в сумме " + target + ":");
+        System.out.println("Вывод первой пары чисел из массива, дающих в сумме " + target + ":");
         int[] firstPair = getFirstSumGroup(array1, target);
-        System.out.println(Arrays.toString(array1) + ", " + target + " -> " + Arrays.toString(firstPair));
-
+        System.out.print(Arrays.toString(array1) + ", " + target + " -> ");
+        if (firstPair.length == 0) System.out.println("Решений нет");
+        else System.out.println(Arrays.toString(firstPair));
         System.out.println();
 
         //Вывод всех пар
         int[] array2 = {3, 4, 6, 1, 9, 2, 7};
-        System.out.println("Вывод всех пар чисел, дающих в сумме " + target + ":");
-        List<int[]> list = getAllSumGroup(array2, 10);
-        System.out.print(Arrays.toString(array2) + ", " + target + " -> ");
-        list.forEach(x -> System.out.print(Arrays.toString(x) + " "));
-
+        int target2 = 10;
+        System.out.println("Вывод всех пар чисел, дающих в сумме " + target2 + ":");
+        List<int[]> list = getAllSumGroup(array2, target2);
+        System.out.print(Arrays.toString(array2) + ", " + target2 + " -> ");
+        if (list.isEmpty()) System.out.println("Решений нет");
+        else list.forEach(x -> System.out.print(Arrays.toString(x) + " "));
         System.out.println();
         System.out.println();
         /*
@@ -210,7 +212,6 @@ public class ComplexExamples {
      */
     private static Function<Person, Person> getNormalCaseNames = x -> new Person(x.getId(),
             x.getName().substring(0, 1).toUpperCase() + x.getName().substring(1).toLowerCase());
-
     /*
     Проверяем, чтобы значение в массиве не равнялось null и чтобы "name" у объекта не было равно null
      */
@@ -235,13 +236,12 @@ public class ComplexExamples {
     public static int[] getFirstSumGroup(int[] array, int target) {
         //Если передан null или массив, размером меньше 2, возвращаем пустой лист
         if (array == null || array.length < 2) return new int[]{};
-        for (int i = 0; i < array.length - 1; i++) {
-            for (int j = 1; j < array.length; j++) {
-                //Проходим по циклу, пока не найдем первую пару чисел, дающую в сумме входное число
-                if (array[i] + array[j] == target) {
-                    return new int[]{array[i], array[j]};
-                }
-            }
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < array.length; i++) {
+            int value = array[i];
+            int key = target - value;
+            if (map.containsKey(value)) return new int[]{map.get(value), value};
+            else map.put(key, value);
         }
         //Если пара чисел не найдена, возвращаем пустой массив
         return new int[]{};
@@ -252,52 +252,14 @@ public class ComplexExamples {
         //Если передан null или массив, размером меньше 2, возвращаем пустой лист
         if (array == null || array.length < 2) return Collections.EMPTY_LIST;
         List<int[]> sumPairs = new ArrayList<>();
-        //Отсортируем массив
-        insertionSort(array);
-        int firstNumber = 0;//Начало массива
-        int lastNumber = array.length - 1;//Конец массива
-        //Пока конец и начало не пересеклись
-        while (firstNumber < lastNumber) {
-            int pairSumResult = array[firstNumber] + array[lastNumber];//Результат суммы двух пар
-            //Если сумма пар равна входному числу
-            if (pairSumResult == target) {
-                //Добавляем пары в список
-                sumPairs.add(new int[]{array[firstNumber], array[lastNumber]});
-                //смещаем начало и конец к центру
-                firstNumber++;
-                lastNumber--;
-                //Если сумма пар не равна входному числу
-            } else {
-                if (pairSumResult < target)
-                    firstNumber++;//Если результат суммы меньше входного числа, смещаем к центру начало массива
-                else lastNumber--;//Если больше, смещаем к центру конец массива
-            }
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < array.length; i++) {
+            int value = array[i];
+            int key = target - value;
+            if (map.containsKey(value)) sumPairs.add(new int[]{map.get(value), value});
+            else map.put(key, value);
         }
         return sumPairs;
-    }
-
-    //Реализация алгоритма сортировки методом вставок
-    //Метод для перестановки значений в массиве во время его сортировки
-    private static void swap(int[] array, int x, int y) {
-        int temp = array[x];
-        array[x] = array[y];
-        array[y] = temp;
-    }
-
-    //Алгоритм сортировки методом вставок
-    public static void insertionSort(int[] array) {
-        int i, j, temp;
-        //Внешний цикл
-        for (i = 1; i < array.length; i++) {
-            j = i;
-            temp = array[i];
-            //Внутренний цикл, поиск наименьшего значения
-            while (j > 0 && array[j] < array[j - 1]) {
-                swap(array, j, j - 1);
-                j--;
-            }
-            array[j] = temp;
-        }
     }
 
     //Task3
