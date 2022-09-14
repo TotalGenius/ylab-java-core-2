@@ -340,7 +340,7 @@ class ComplexExamplesTest {
     void getAllSumGroupTest1() {
         int[] array = {1, 5, 9, 7, 12, 10, 16};
         int target = 17;
-        int[] expected = {1, 16, 5, 12, 7, 10};
+        int[] expected = {5,12,7,10,1,16};
         List<int[]> list = ComplexExamples.getAllSumGroup(array, target);
         int[] actual = list.stream().flatMapToInt(x -> Arrays.stream(x)).toArray();
         assertArrayEquals(expected, actual);
